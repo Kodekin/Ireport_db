@@ -53,5 +53,30 @@ class IncidentsModel(BaseClassModel):
            resp.append(info)
            return resp
 
+      def getspecificincident(self, num):
+        
+        curr = self.db.cursor()
+        query = "SELECT incident_id, createdBy, type, location, status, images, videos, createdOn FROM incidents WHERE incident_id={};".format(num)
+        curr.execute(query)
+        data = curr.fetchone()
+        resp = []
+        info = dict(
+            incident_id=data[0],
+            createdBy=data[1],
+            type=str(data[2]),
+            location=str(data[3]),
+            status=str(data[4]),
+            images=str(data[5]),
+            videos=str(data[6]),
+            createdOn=str(data[7])
+        )
+        _record = self.record_exists(info['num'])
+        if not _record:
+            return "Record does not exists"
+        else:
+            resp.append(info)
+
+            return resp
+
 
    
