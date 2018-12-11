@@ -40,7 +40,6 @@ class RedFlags(Resource, IncidentsModel):
 			return "Not Authorized"
 
 	def get(self):
-		
 		auth_header = request.headers.get('Authorization')
 		if not auth_header:
 			return "Authorization header needed", 400
@@ -50,7 +49,6 @@ class RedFlags(Resource, IncidentsModel):
 
 		if user[1] == True:
 			resp = self.db.getallincidents()
-
 			return make_response(jsonify(
 						{
 						"RedFlag" : resp,
