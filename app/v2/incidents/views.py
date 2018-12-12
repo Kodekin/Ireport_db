@@ -57,7 +57,7 @@ class RedFlags(Resource, IncidentsModel):
 		else:
 			return "Not Authorized"
 
-	class RedFlag(Resource, IncidentsModel):
+class RedFlag(Resource, IncidentsModel):
 	"""docstring for RedFlag"""
 	def __init__(self):
 		self.db = IncidentsModel()
