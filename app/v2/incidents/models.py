@@ -78,5 +78,26 @@ class IncidentsModel(BaseClassModel):
 
             return resp
 
+    def update_item(self, field, data, num):
+        curr = self.db.cursor()
+        update = "UPDATE incidents SET {}='{}' WHERE incident_id={};".format(field, data, num)
+        curr.execute(update)
+        self.db.commit()
+        return field
+
+
+    def destroy(self, num):
+        curr = self.db.cursor()
+        del_qry= "DELETE FROM incidents WHERE incident_id={};".format(num)
+        curr.execute(del_qry)
+        self.db.commit()
+        return num
+
+    def record_exists(self, num):
+        curr = self.db.cursor()
+        query = "SELECT * FROM incidents WHERE incident_id='{}';".format(num)
+        curr.execute(query)
+        return curr.fetchone()
+
 
    
