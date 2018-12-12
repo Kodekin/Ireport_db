@@ -81,6 +81,49 @@ class RedFlag(Resource, IncidentsModel):
 		else:
 			return "Not Authorized"
 
+	def put(self, num):
+		auth_header = request.headers.get('Authorization')
+		if not auth_header:
+			return "Authorization header needed", 400
+
+		token = auth_header.split(" ")[1]
+		user = IncidentsModel().decode_auth_token(token)
+
+		if user[1] == True:
+			req_data = request.get_json()
+			update = req_data.items()
+			for field, data in update:
+				resp = self.db.update_item(field, data, num)
+				msg = "{} updated successfully".format(resp)
+
+				return make_response(jsonify(
+					{
+					"Message" : msg,
+					"status" : 200
+					}), 200)
+		else:
+			return "Not Authorized"
+
+	def delete(self, num):
+		auth_header = request.headers.get('Authorization')
+		if not auth_header:
+			return "Authorization header needed", 400
+
+		token = auth_header.split(" ")[1]
+		user = IncidentsModel().decode_auth_token(token)
+
+		if user[1] == True:
+			resp = self.db.destroy(num)
+			msg = "Id {} deleted successfully".format(resp)
+
+			return make_response(jsonify(
+				{
+				"Message" : msg,
+				"status" : 200
+				}), 200)
+		else:
+			return "Not Authorized"
+
 
 
 		
