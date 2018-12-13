@@ -1,10 +1,5 @@
 language: python
 
-env:
-  DATABASE_URL="dbname='ireporter' host='localhost' port='5432' user='postgres' password='tomkin254'"
-  DATABASE_TEST_URL="dbname='ireporter_test' host='localhost' port='5432' user='postgres' password='tomkin254'"
-  SECRET_KEY="tooooooooom"
-
 python:
   - "3.6"
 
