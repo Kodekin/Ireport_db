@@ -27,7 +27,8 @@ class UsersModel(BaseClassModel):
             query = """INSERT INTO users (firstname, lastname, email, username, password) VALUES
                         (%(firstname)s, %(lastname)s, %(email)s, %(username)s, %(password)s ) RETURNING username """
             curr = self.db.cursor()
-            username = curr.execute(query, user)
+            curr.execute(query, user)
+            username = curr.fetchone()[0]
             self.db.commit()
             return username
 
