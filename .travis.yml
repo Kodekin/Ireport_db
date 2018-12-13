@@ -1,25 +1,18 @@
-language: python
+llanguage: python
 
 python:
   - "3.6"
 
 install:
+
   - pip install -r requirements.txt
-  - pip install coveralls codecov
+  - pip install codecov coveralls
+    
 
-services:
-  - postgresql
-addons:
-  postgresql: "9.6"
-
-
-before_script:
-  - psql -c 'CREATE DATABASE ireporter' -U postgres
-  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public to postgres ;" -U postgres
 
 script:
-  - nosetests --with-coverage --cover-package=app app/tests
+  - py.test -v --cov-report term-missing --cov  app
 
 after_success:
   - coveralls
-- codecov --token=
+  - codecov 
