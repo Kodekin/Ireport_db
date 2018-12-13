@@ -26,7 +26,7 @@ before_script:
 
 
 script:
-  - nosetests --with-coverage --cover-package=app
+  - nosetests --with-coverage --cover-package=app app/tests
 
 after_success:
   - coveralls
