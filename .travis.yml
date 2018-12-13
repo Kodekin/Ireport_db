@@ -11,7 +11,7 @@ install:
 
 
 script:
-  - py.test -v --cov-report term-missing --cov  app
+  - nosetests --with-coverage --cover-package=app
 
 after_success:
   - coveralls
