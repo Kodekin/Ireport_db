@@ -15,4 +15,4 @@ script:
 
 after_success:
   - coveralls
-  - codecov 
+  - codecov --token=c854cf5c-b5f1-401a-98cc-6bedb183f1bf
