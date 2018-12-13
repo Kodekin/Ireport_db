@@ -2,11 +2,13 @@ from flask_restful import Resource
 from flask import jsonify, make_response, request
 
 from .models import UsersModel
+import re
 
 
 
 def _validator(user):
 	error = False
+
 	for key, value in user.items():
 		if not value:
 			error =  make_response(jsonify({
@@ -14,27 +16,27 @@ def _validator(user):
 					}), 403)
 			return error
 
-		if key == "username" or key =="password":
+		elif key == "username" or key =="password":
 			if len(value) < 5:
 				error =  make_response(jsonify({
 					"Error" : "Bad Request, {} value is too short".format(key)
 					}), 403)
-			else:
-				if len(value) > 20:
-					error =  make_response(jsonify({
-						"Error" : "Bad Request, {} value is too long".format(key)
-						}), 403)
-			return error
+				return error
 			
-		if key == "email":
+			elif len(value) > 20:
+				error =  make_response(jsonify({
+					"Error" : "Bad Request, {} value is too long".format(key)
+					}), 403)
+				return error
+			
+		elif key == "email":
 			if len(value) < 7:
 				error =  make_response(jsonify({
 						"Error" : "Bad Request, {} has bad format".format(key)
 						}), 403)
-				return error	
-			else:
-	 			if re.match("^.+@([?)[a-zA-Z0-9-.]+.([a-zA-Z]{2,3}|[0-9]{1,3})(]?)$", email) != None:
-		 				return True
+				return error
+		else:
+			return False
  				
 			
 
@@ -56,6 +58,13 @@ class UserSignup(Resource):
 		valid = _validator(user)
 
 		if valid == False:
+			record = UsersModel().user_exists(user['username'])
+			if record:
+				return make_response(jsonify(
+				{
+				"Message" : "User already exist",
+				"status" : 200
+				}), 200)
 			
 			resp = UsersModel().save(user['firstname'], user['lastname'], user['email'], user['username'], user['password'])
 			token = UsersModel().encode_auth_token(resp)
@@ -75,19 +84,24 @@ class UserSignin(Resource):
 
 	def post(self):
 		data=request.get_json()
+
 		username=data['username']
 		password=data['password']
 		
 		record = UsersModel().user_exists(username)
+
 		if not record:
-			return "No such user"
+			return make_response(jsonify({
+				"Message" : "No such user"
+				}), 202) 
+
 		username, passworddb = record
 		if password == passworddb:
 			token = UsersModel().encode_auth_token(username)
 			return make_response(jsonify({
 				"Message" : "Success",
-				"Auth-token" : token,
-				"user" : username
+				"Auth-token" : str(token),
+				"user" : str(username)
 				}), 202)
 		else:
 			return "username/password do not match"

@@ -2,48 +2,47 @@ import psycopg2
 
 import os
 
+#url = "dbname='ireporter' host='localhost' port='5432' user='postgres' password='tomkin254'"
 
 
-
-url = "dbname='ireporter' host='localhost' port='5432' user='postgres' password='tomkin254'"
-
-
-db_url = os.getenv('DATABASE_URL')
-
-
-def connection(url):
-    con = psycopg2.connect(url)
-    return con
+url = os.getenv('DATABASE_URL')
+test_url = os.getenv('DATABASE_TEST_URL')
 
 
 def init_db():
-    con = connection(url)
-    return con
-
-
-def create_tables():
-
-    conn = connection(url)
-    curr = conn.cursor()
+    con = psycopg2.connect(url)
+    curr = con.cursor()
     queries = ireportertables()
-
-
     for query in queries:
         curr.execute(query)
-    conn.commit()
+    con.commit()
+    return con
+
+def _init_db():
+    con = psycopg2.connect(test_url)
+    curr = con.cursor()
+    queries = ireportertables()
+    for query in queries:
+        curr.execute(query)
+    con.commit()
+    return con
 
 
 def destroy_tables():
 
-    conn = connection(url)
+    conn = psycopg2.connect(url)
     curr = conn.cursor()
-    incidents = "DROP TABLE IF EXISTS incidents CASCADE"
-    users = "DROP TABLE IF EXISTS users CASCADE"
-    blacklist = "DROP TABLE IF EXISTS users CASCADE"
+    incidents = """DROP TABLE IF EXISTS incidents CASCADE;"""
+    users = """DROP TABLE IF EXISTS users CASCADE;"""
+    blacklist = """DROP TABLE IF EXISTS blacklist CASCADE;"""
     queries = [incidents, users, blacklist]
-    for query in queries:
-        curr.execute(query)
-    conn.commit()
+    try:
+        for query in queries:
+            curr.execute(query)
+        conn.commit()
+    except:
+        return "FAIL"
+    
 
 
 def ireportertables():

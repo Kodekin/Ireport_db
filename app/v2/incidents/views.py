@@ -15,7 +15,7 @@ class RedFlags(Resource, IncidentsModel):
 
 		auth_header = request.headers.get('Authorization')
 		if not auth_header:
-			return "Authorization header neede", 400
+			return "Authorization header needed", 400
 
 		token = auth_header.split(" ")[1]
 		user = IncidentsModel().decode_auth_token(token)
