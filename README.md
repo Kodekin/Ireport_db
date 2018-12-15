@@ -19,6 +19,7 @@ These instructions will get you a copy of the project up and running on your loc
 * **Python3**
 * **Flask**
 * **Flask-RESTful**
+* **PostgreSql**
 
 # [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2227030)
 
