@@ -64,7 +64,7 @@ To follow along with this examples get postman app installed.
 
 - Create A New User
 
-![post man](images/usersignup.png)
+![post man](screenshot/usersignup.png)
 
 - Post data in the format below to the redflag endpoint :
 ```
@@ -82,7 +82,7 @@ http://127.0.0.1:5000/v2/auth/signup
 
 - Login in a registered user
 
-![post man](images/userlogin.png)
+![post man](screenshot/userlogin.png)
 
 - Post data in the format below to the redflag endpoint :
 ```
@@ -97,7 +97,7 @@ http://127.0.0.1:5000/v2/auth/login
 
 - Create Incident
 
-![post man](images/createincident.png)
+![post man](screenshot/createincident.png)
 
 - Post data in the format below to the redflag endpoint :
 ```
@@ -116,7 +116,7 @@ http://127.0.0.1:5000/v2/redflags
 
 - Get all Incidents
 
-![post man](images/getallincidents.png)
+![post man](screenshot/getallincidents.png)
 
 
 - Get data from the Incidents endpoint :
@@ -126,7 +126,7 @@ http://127.0.0.1:5000/v2/redflags/1
 
 - Get specific Incident
 
-![post man](images/getspecificincident.png)
+![post man](screenshot/getspecificincident.png)
 
 
 - Get data from the incidents endpoint :
@@ -136,7 +136,7 @@ http://127.0.0.1:5000/v2/redflags/1
 
 - Edit specific Incident
 
-![post man](images/updatespecificatribute.png)
+![post man](screenshot/updatespecificatribute.png)
 
 
 - Post data in the format below to the incident endpoint : 
@@ -151,7 +151,7 @@ http://127.0.0.1:5000/v2/redflags/1
 
 - Delete Specific Incident
 
-![post man](images/deletespecificincident.png)
+![post man](screenshot/deletespecificincident.png)
 
 
 - Delete data from the incident endpoint :
