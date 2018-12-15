@@ -3,6 +3,7 @@ from flask import jsonify, make_response, request
 
 from .models import UsersModel
 import re
+import string
 
 
 
@@ -12,32 +13,53 @@ def _validator(user):
 	for key, value in user.items():
 		if not value:
 			error =  make_response(jsonify({
-					"Error" : "Bad Request, {} is lacking".format(key)
-					}), 403)
+					"Error" : "Hello user, {} field is required".format(key)
+					}), 400)
 			return error
 
-		elif key == "username" or key =="password":
+		elif key == "username" or key == "password":
+			if len(value.strip()) == 0:
+				error =  make_response(jsonify({
+					"Error" : "Hello user, {} field  is required".format(key)
+					}), 400)
+				return error
+
 			if len(value) < 5:
 				error =  make_response(jsonify({
-					"Error" : "Bad Request, {} value is too short".format(key)
-					}), 403)
+					"Error" : "Hello user, {} value is too short".format(key)
+					}), 400)
 				return error
 			
 			elif len(value) > 20:
 				error =  make_response(jsonify({
-					"Error" : "Bad Request, {} value is too long".format(key)
-					}), 403)
+					"Error" : "Hello user, {} value is too long".format(key)
+					}), 400)
 				return error
+
 			
 		elif key == "email":
-			if len(value) < 7:
+			if len(value) < 7 or  "@" not in value:
 				error =  make_response(jsonify({
-						"Error" : "Bad Request, {} has bad format".format(key)
-						}), 403)
+						"Error" : "Hello user, {} has bad format".format(key)
+						}), 400)
 				return error
-		else:
-			return False
- 				
+
+		elif key == "firstname" or key == "lastname" :
+			for i in value:
+
+				if i not in string.ascii_letters:
+					error =  make_response(jsonify({
+						"Error" : "Field {} cannot take non-alphabetic characters".format(key),
+						"status": 400
+						}),400)
+					return error
+
+
+
+	else:
+		return False
+
+	
 			
 
 			
@@ -47,12 +69,13 @@ class UserSignup(Resource):
 	def post(self):
 		data=request.get_json()
 
+
 		user = dict(
-			firstname=data['firstname'],
-			lastname=data['lastname'],
-			email=data['email'],
-			username=data['username'],
-			password=data['password']
+			firstname=data.get('firstname'),
+			lastname=data.get('lastname'),
+			email=data.get('email'),
+			username=data.get('username'),
+			password=data.get('password')
 		)
 
 		valid = _validator(user)
@@ -99,7 +122,7 @@ class UserSignin(Resource):
 		if password == passworddb:
 			token = UsersModel().encode_auth_token(username)
 			return make_response(jsonify({
-				"Message" : "Success",
+				"Message" : "User logged in successfully",
 				"Auth-token" : str(token),
 				"user" : str(username)
 				}), 202)

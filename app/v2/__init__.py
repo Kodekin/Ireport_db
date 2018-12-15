@@ -9,6 +9,6 @@ api = Api(api_version_two)
 
 
 api.add_resource(RedFlags, "/redflags")
-api.add_resource(RedFlag, "/redflags/<int:num>")
+api.add_resource(RedFlag, "/redflags/<int:incident_id>")
 api.add_resource(UserSignup, "/auth/signup")
 api.add_resource(UserSignin, "/auth/login")

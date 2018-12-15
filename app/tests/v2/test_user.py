@@ -48,22 +48,61 @@ class AuthTest(unittest.TestCase):
     def test_user_login(self):
         reg = self.post_data()
         login = self.user_login()
-        self.assertEqual(login.json["Message"], "Success")
+        self.assertEqual(login.json["Message"], "User logged in successfully")
         self.assertEqual(login.status_code, 202)
         self.assertTrue(login.json["Auth-token"])
 
-    def test_validation(self):
+    def test_empty_string_field(self):
         payload = {
             "firstname" : "jdkandlals",
-            "lastname" : "",
+            "lastname" : "markobed",
             "email" : "tom@gmail.com",
             "username" : "toskask",
-            "password" : "dhfjfjjs"
+            "password" : ""
         }
         empty_req = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
                                   content_type='application/json')
-        self.assertEqual(empty_req.status_code, 403)
-        self.assertEqual(empty_req.json['Error'], "Bad Request, lastname is lacking")
+        self.assertEqual(empty_req.status_code, 400)
+        self.assertEqual(empty_req.json['Error'], "Hello user, password field is required")
+
+    def test_length_of_credentials(self):
+        payload = {
+            "firstname" : "jdkandlals",
+            "lastname" : "emery",
+            "email" : "tom@gmail.com",
+            "username" : "tos",
+            "password" : "dhfjfjjs"
+        }
+        short_req = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
+                                  content_type='application/json')
+        self.assertEqual(short_req.status_code, 400)
+        self.assertEqual(short_req.json['Error'], "Hello user, username value is too short")
+
+    def test_email_format(self):
+        payload = {
+            "firstname" : "jdkandlals",
+            "lastname" : "emery",
+            "email" : "tomgmail.com",
+            "username" : "tommwaka",
+            "password" : "dhfjfjjs"
+        }
+        mail = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
+                                  content_type='application/json')
+        self.assertEqual(mail.status_code, 400)
+        self.assertEqual(mail.json['Error'], "Hello user, email has bad format")
+
+    def test_string_characters(self):
+        payload = {
+            "firstname" : "576483",
+            "lastname" : "emery",
+            "email" : "tom@gmail.com",
+            "username" : "tommwaka",
+            "password" : "dhfjfjjs"
+        }
+        value_typ = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
+                                  content_type='application/json')
+        self.assertEqual(value_typ.status_code, 400)
+        self.assertEqual(value_typ.json['Error'], "Field firstname cannot take non-alphabetic characters")
 
 
     def test_an_unregistered_user(self):
@@ -74,6 +113,18 @@ class AuthTest(unittest.TestCase):
         
         login = self.client.post(path='/v2/auth/login', data=json.dumps(un_user), content_type='application/json')
         self.assertEqual(login.json['Message'], "No such user")
+
+    def test_missing_field(self):
+        payload = {
+            "lastname" : "emery",
+            "email" : "tom@gmail.com",
+            "username" : "tommwaka",
+            "password" : "dhfjfjjs"
+        }
+        no_field = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
+                                  content_type='application/json')
+        self.assertEqual(no_field.status_code, 400)
+        self.assertEqual(no_field.json['Error'], "Hello user, firstname field is required")
 
     def tearDown(self):
 

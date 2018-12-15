@@ -53,10 +53,10 @@ class IncidentsModel(BaseClassModel):
            resp.append(info)
            return resp
 
-    def getspecificincident(self, num):
+    def getspecificincident(self, incident_id):
         
         curr = self.db.cursor()
-        query = "SELECT incident_id, createdBy, type, location, status, images, videos, createdOn FROM incidents WHERE incident_id={};".format(num)
+        query = "SELECT incident_id, createdBy, type, location, status, images, videos, createdOn FROM incidents WHERE incident_id={};".format(incident_id)
         curr.execute(query)
         data = curr.fetchone()
         resp = []
@@ -70,7 +70,7 @@ class IncidentsModel(BaseClassModel):
             videos=str(data[6]),
             createdOn=str(data[7])
         )
-        _record = self.record_exists(info['num'])
+        _record = self.record_exists(info['incident_id'])
         if not _record:
             return "Record does not exists"
         else:
@@ -78,24 +78,24 @@ class IncidentsModel(BaseClassModel):
 
             return resp
 
-    def update_item(self, field, data, num):
+    def update_item(self, field, data, incident_id):
         curr = self.db.cursor()
-        update = "UPDATE incidents SET {}='{}' WHERE incident_id={};".format(field, data, num)
+        update = "UPDATE incidents SET {}='{}' WHERE incident_id={};".format(field, data, incident_id)
         curr.execute(update)
         self.db.commit()
         return field
 
 
-    def destroy(self, num):
+    def destroy(self, incident_id):
         curr = self.db.cursor()
-        del_qry= "DELETE FROM incidents WHERE incident_id={};".format(num)
+        del_qry= "DELETE FROM incidents WHERE incident_id={};".format(incident_id)
         curr.execute(del_qry)
         self.db.commit()
-        return num
+        return incident_id
 
-    def record_exists(self, num):
+    def record_exists(self, incident_id):
         curr = self.db.cursor()
-        query = "SELECT * FROM incidents WHERE incident_id='{}';".format(num)
+        query = "SELECT * FROM incidents WHERE incident_id='{}';".format(incident_id)
         curr.execute(query)
         return curr.fetchone()
 
