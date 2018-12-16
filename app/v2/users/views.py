@@ -44,6 +44,7 @@ def _validator(user):
 						}), 400)
 				return error
 
+
 		elif key == "firstname" or key == "lastname" :
 			for i in value:
 
@@ -75,7 +76,8 @@ class UserSignup(Resource):
 			lastname=data.get('lastname'),
 			email=data.get('email'),
 			username=data.get('username'),
-			password=data.get('password')
+			password=data.get('password'),
+			isadmin=data.get('isadmin')
 		)
 
 		valid = _validator(user)
@@ -89,8 +91,8 @@ class UserSignup(Resource):
 				"status" : 200
 				}), 200)
 			
-			resp = UsersModel().save(user['firstname'], user['lastname'], user['email'], user['username'], user['password'])
-			token = UsersModel().encode_auth_token(resp)
+			resp = UsersModel().save(user['firstname'], user['lastname'], user['email'], user['username'], user['password'], user['isadmin'])
+			token = UsersModel().encode_auth_token(resp, user['isadmin'])
 			return make_response(jsonify(
 				{
 				"Message" : "Success",
@@ -115,16 +117,45 @@ class UserSignin(Resource):
 
 		if not record:
 			return make_response(jsonify({
-				"Message" : "No such user"
+				"Message" : "No such user",
+				"status" : 202
 				}), 202) 
 
-		username, passworddb = record
+		username, passworddb, role = record
 		if password == passworddb:
-			token = UsersModel().encode_auth_token(username)
+			token = UsersModel().encode_auth_token(username, role)
 			return make_response(jsonify({
 				"Message" : "User logged in successfully",
 				"Auth-token" : str(token),
 				"user" : str(username)
 				}), 202)
 		else:
-			return "username/password do not match"
+			return make_response(jsonify({
+				"Message" : "username/password do not match",
+				"status" : 401
+				}),401)
+
+class UserLogOut(Resource):
+
+	def post(self):
+		auth_header = request.headers.get('Authorization')
+		if not auth_header:
+			return make_response(jsonify({
+				"Message" : "Authorization header needed",
+				"status" : 400
+				}),400)
+
+		token = auth_header.split(" ")[1]
+		user = UsersModel().decode_auth_token(token)
+		if not isinstance(user[0], int):
+			resp =UsersModel().logout_user(token)
+			if resp:
+				return make_response(jsonify({
+					"Message" : "successfully logged out",
+					"status" : 201
+					}),201)
+		else:
+			return make_response(jsonify({
+				"Message" : "Not Authorized",
+				"status" : 401
+				}),401)		

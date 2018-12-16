@@ -54,6 +54,7 @@ def ireportertables():
 	    type character varying(50) NOT NULL,
 	    location character varying(50) NOT NULL,
 	    status  character varying(50) NOT NULL,
+        description character varying(100) NOT NULL,
 	    images  character varying(50) NOT NULL,
         videos  character varying(50) NOT NULL,
 	    createdOn timestamp with time zone DEFAULT ('now'::text)::date NOT NULL
@@ -68,7 +69,8 @@ def ireportertables():
         email character varying(50),
 	    username character varying(50) NOT NULL,
 	    date_created timestamp with time zone DEFAULT ('now'::text)::date NOT NULL,
-	    password character varying(500) NOT NULL
+	    password character varying(500) NOT NULL,
+        isadmin boolean NOT NULL
 	    )"""
 
     blacklist = """CREATE TABLE IF NOT EXISTS blacklist (

@@ -19,7 +19,8 @@ class AuthTest(unittest.TestCase):
                 "lastname" : "tommwasaka",
                 "email" : "tom@gmail.com",
                 "username" : "hosanssasadqw",
-                "password" : "dhfjfjjs"
+                "password" : "dhfjfjjs",
+                "isadmin" : True
             }
         with self.app.app_context():
             self.db = _init_db()
@@ -40,6 +41,14 @@ class AuthTest(unittest.TestCase):
         result = self.client.post(path, data=json.dumps(payload), content_type='application/json')
         return result
 
+    def logout_user(self, path='/v2/auth/logout', data={}):
+        new_user = self.post_data()
+        token = new_user.json['Auth-token']
+        headers = {"Authorization": "Bearer {}".format(token)}
+        result = self.client.post(path, data="", headers=headers,
+                                  content_type='application/json')
+        return result
+
     def test_sign_up_user(self):
         new_user = self.post_data()
         self.assertEqual(new_user.status_code, 201)
@@ -58,7 +67,8 @@ class AuthTest(unittest.TestCase):
             "lastname" : "markobed",
             "email" : "tom@gmail.com",
             "username" : "toskask",
-            "password" : ""
+            "password" : "",
+            "isadmin" : True
         }
         empty_req = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
                                   content_type='application/json')
@@ -71,7 +81,9 @@ class AuthTest(unittest.TestCase):
             "lastname" : "emery",
             "email" : "tom@gmail.com",
             "username" : "tos",
-            "password" : "dhfjfjjs"
+            "password" : "dhfjfjjs",
+            "isadmin" : True
+
         }
         short_req = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
                                   content_type='application/json')
@@ -84,7 +96,8 @@ class AuthTest(unittest.TestCase):
             "lastname" : "emery",
             "email" : "tomgmail.com",
             "username" : "tommwaka",
-            "password" : "dhfjfjjs"
+            "password" : "dhfjfjjs",
+            "isadmin" : True
         }
         mail = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
                                   content_type='application/json')
@@ -97,7 +110,8 @@ class AuthTest(unittest.TestCase):
             "lastname" : "emery",
             "email" : "tom@gmail.com",
             "username" : "tommwaka",
-            "password" : "dhfjfjjs"
+            "password" : "dhfjfjjs",
+            "isadmin" : True
         }
         value_typ = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
                                   content_type='application/json')
@@ -119,12 +133,18 @@ class AuthTest(unittest.TestCase):
             "lastname" : "emery",
             "email" : "tom@gmail.com",
             "username" : "tommwaka",
-            "password" : "dhfjfjjs"
+            "password" : "dhfjfjjs",
+            "isadmin" : True
         }
         no_field = self.client.post(path='/v2/auth/signup', data=json.dumps(payload),
                                   content_type='application/json')
         self.assertEqual(no_field.status_code, 400)
         self.assertEqual(no_field.json['Error'], "Hello user, firstname field is required")
+
+    def test_user_logout(self):
+        logout = self.logout_user()
+        self.assertEqual(logout.json["Message"], "successfully logged out")
+        self.assertEqual(logout.status_code, 201)
 
     def tearDown(self):
 
