@@ -29,9 +29,11 @@ These instructions will get you a copy of the project up and running on your loc
 | :--- | :--- | :--- |
 | Post | /auth/signup | Creates a new user |
 | Post | /auth/login | Enables user login |
+| Post | /auth/logout | Enables user to logout |
 | Post | v2/redflags | Creates an incident |
 | Get | v2/redflags | Gets all incidents |
 | Get | v2/redflags/id | Gets a specific incident |
+| Get | v2/redflags/username | Gets specific incidents for that user |
 | Put | v2/redflags/id | Edit a specific incident |
 | Delete | v2/redflags/id | Delete a specific incident |
 

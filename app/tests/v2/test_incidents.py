@@ -54,7 +54,9 @@ class AuthTest(unittest.TestCase):
                                                 content_type='application/json')
         return result
 
-    def get_flags(self, path='/v2/redflags'):
+    def get_flags(self, path=''):
+        if not path:
+            path = '/v2/redflags'
         token = self.create_user()[1]
         headers = {"Authorization": "Bearer {}".format(token)}
         result = self.client.get(path, headers=headers, content_type='application/json')        
@@ -86,6 +88,11 @@ class AuthTest(unittest.TestCase):
 
     def test_get_incidents(self):
         incidents = self.get_flags()
+        self.assertEqual(incidents.status_code, 200)
+
+    def test_get_specific_user_incidents(self):
+        path = '/v2/redflags/{}'.format(self.user['username'])
+        incidents = self.get_flags(path=path)
         self.assertEqual(incidents.status_code, 200)
 
     def test_edit_incident(self):
