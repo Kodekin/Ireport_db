@@ -11,21 +11,22 @@ class UsersModel(BaseClassModel):
 
         self.db = init_db()
 
-    def save(self, firstname, lastname, email, username, password):
+    def save(self, firstname, lastname, email, username, password, isadmin):
         user = {
             "firstname": firstname,
             "lastname": lastname,
             "email": email,
             "username": username,
             "password": password,
+            "isadmin": isadmin
             
         }
         _record = self.user_exists(user['username'])
         if _record:
             return "Username '{}' already exists".format(username)
         else:
-            query = """INSERT INTO users (firstname, lastname, email, username, password) VALUES
-                        (%(firstname)s, %(lastname)s, %(email)s, %(username)s, %(password)s ) RETURNING username """
+            query = """INSERT INTO users (firstname, lastname, email, username, password, isadmin) VALUES
+                        (%(firstname)s, %(lastname)s, %(email)s, %(username)s, %(password)s, %(isadmin)s ) RETURNING username """
             curr = self.db.cursor()
             curr.execute(query, user)
             username = curr.fetchone()[0]
@@ -34,20 +35,20 @@ class UsersModel(BaseClassModel):
 
     def user_exists(self, username):
         curr = self.db.cursor()
-        query = "SELECT username, password FROM users WHERE username='{}';".format(username)
+        query = "SELECT username, password, isadmin FROM users WHERE username='{}';".format(username)
         curr.execute(query)
         return curr.fetchone()
 
 
     def logout_user(self, token):
-        """This function logs out a user by adding thei token to the blacklist table"""
+        """This function logs out a user by adding their token to the blacklist table"""
         conn = self.db
         curr = conn.cursor()
+        inputs = {"tokens": token}
         query = """
-                INSERT INTO blacklist 
+                INSERT INTO blacklist (tokens)
                 VALUES (%(tokens)s) RETURNING tokens;
                 """
-        inputs = {"tokens": token}
         curr.execute(query, inputs)
         blacklisted_token = curr.fetchone()[0]
         conn.commit()
