@@ -156,7 +156,7 @@ class RedFlag(Resource, IncidentsModel):
 					if field == "status":
 						if user[1] == "True":
 							resp = self.db.update_item(field, data, incident_id)
-							body = "Hey <b>{}</b>,</ br> the status of your incident has been changed to <b><i>{}</i></b>".format(n_owner, data)
+							body = "Hey {},the status of your incident has been changed to {}".format(n_owner, data)
 							IncidentsModel().send_email(email, body)
 							msg = "{} updated successfully".format(resp)
 
@@ -233,6 +233,34 @@ class RedFlag(Resource, IncidentsModel):
 				"Message" : "Not Authorized",
 				"status" : 401
 				}),401)	
+
+class UserRedflag(Resource):
+	"""docstring for UserRedflag"""
+	def get(self, username):
+		auth_header = request.headers.get('Authorization')
+		if not auth_header:
+			return make_response(jsonify({
+				"Message" : "Authorization header needed",
+				"status" : 400
+				}),400)
+
+		token = auth_header.split(" ")[1]
+		user = IncidentsModel().decode_auth_token(token)
+
+		if not isinstance(user[0], int):
+			resp = IncidentsModel().get_specific_user_incident(username)
+			return make_response(jsonify(
+				{
+				"RedFlag" : resp,
+				"status" : 200
+				}), 200)
+		else:
+			return make_response(jsonify({
+				"Message" : "Not Authorized",
+				"status" : 401
+				}),401)	
+		
+		
 
 
 	
